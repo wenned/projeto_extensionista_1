@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  name           String
+  password       String
+  role           String    @default("ALUNO")
+  turma          String?
+  matricula      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  projetos       Projeto[]
+  eventos        Evento[]
+  noticias       Noticia[]
+  projetosParticipando  ParticipanteProjeto[]
+  eventosInscrito       InscricaoEvento[]
+}
+
+model Projeto {
+  id             String    @id @default(cuid())
+  titulo         String
+  descricao      String
+  descricaoLonga String?
+  categoria      String
+  status         String    @default("EM_ANDAMENTO")
+  imagemUrl      String?
+  dataInicio     DateTime
+  dataFim        DateTime?
+  
+  criadoPor      String
+  turma          String?
+  responsavel    String
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  user           User      @relation(fields: [criadoPor], references: [id])
+  participantes  ParticipanteProjeto[]
+  galerias       Galeria[]
+}
+
+model ParticipanteProjeto {
+  id        String   @id @default(cuid())
+  projetoId String
+  userId    String
+  funcao    String
+  
+  projeto   Projeto  @relation(fields: [projetoId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([projetoId, userId])
+}
+
+model Evento {
+  id             String    @id @default(cuid())
+  titulo         String
+  descricao      String
+  descricaoLonga String?
+  tipo           String
+  data           DateTime
+  horarioInicio  String
+  horarioFim     String?
+  local          String
+  imagemUrl      String?
+  
+  criadoPor      String
+  publicoAlvo    String
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  user           User      @relation(fields: [criadoPor], references: [id])
+  inscricoes     InscricaoEvento[]
+  galerias       Galeria[]
+}
+
+model InscricaoEvento {
+  id        String   @id @default(cuid())
+  eventoId  String
+  userId    String
+  status    String   @default("PENDENTE")
+  
+  evento    Evento   @relation(fields: [eventoId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  
+  createdAt DateTime @default(now())
+  
+  @@unique([eventoId, userId])
+}
+
+model Noticia {
+  id             String    @id @default(cuid())
+  titulo         String
+  conteudo       String
+  resumo         String
+  categoria      String
+  imagemUrl      String?
+  destaque       Boolean   @default(false)
+  
+  criadoPor      String
+  tags           String
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  user           User      @relation(fields: [criadoPor], references: [id])
+}
+
+model Galeria {
+  id             String    @id @default(cuid())
+  titulo         String
+  descricao      String?
+  eventoId       String?
+  projetoId      String?
+  
+  createdAt      DateTime  @default(now())
+  
+  imagens        Imagem[]
+  evento         Evento?   @relation(fields: [eventoId], references: [id])
+  projeto        Projeto?  @relation(fields: [projetoId], references: [id])
+}
+
+model Imagem {
+  id             String    @id @default(cuid())
+  url            String
+  titulo         String?
+  descricao      String?
+  galeriaId      String
+  
+  createdAt      DateTime  @default(now())
+  
+  galeria        Galeria   @relation(fields: [galeriaId], references: [id])
+}
