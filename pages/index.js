@@ -36,17 +36,14 @@ export default function Home() {
         <main className="flex-grow">
           <Hero />
           
-          {/* Seção Projetos com ID */}
           <section id="projetos">
             <Projetos />
           </section>
           
-          {/* Seção Eventos com ID */}
           <section id="eventos">
             <Eventos />
           </section>
-          
-          {/* Seção Notícias (simulada) com ID */}
+        
           <section id="noticias" className="py-16 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">

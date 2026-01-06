@@ -167,9 +167,8 @@ export default function AdminLayout({ children }) {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="lg:pl-64 flex flex-col flex-1">
-        {/* Top Bar */}
+ 
         <header className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
           <button
             type="button"
@@ -197,12 +196,10 @@ export default function AdminLayout({ children }) {
           </div>
         </header>
 
-        {/* Page Content */}
         <main className="flex-1">
           {children}
         </main>
 
-        {/* Footer */}
         <footer className="bg-white border-t border-gray-200 py-4 px-6">
           <div className="flex justify-between items-center">
             <p className="text-sm text-gray-500">

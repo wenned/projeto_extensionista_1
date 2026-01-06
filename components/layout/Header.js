@@ -27,12 +27,12 @@ export default function Header() {
     router.push('/')
   }
 
-  // Função para rolar para seções na página inicial
+ 
   const scrollToSection = (sectionId) => {
     if (router.pathname !== '/') {
-      // Se não está na página inicial, vai para ela primeiro
+
       router.push('/').then(() => {
-        // Espera a página carregar e depois rola
+
         setTimeout(() => {
           const element = document.getElementById(sectionId)
           if (element) {
@@ -41,7 +41,7 @@ export default function Header() {
         }, 100)
       })
     } else {
-      // Já está na página inicial, apenas rola
+
       const element = document.getElementById(sectionId)
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' })
@@ -53,7 +53,7 @@ export default function Header() {
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">
@@ -62,7 +62,7 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Navigation - Desktop */}
+
           <nav className="hidden md:flex space-x-8">
             <Link href="/" className={`font-medium ${router.pathname === '/' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
               Início
