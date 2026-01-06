@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { verify } from 'jsonwebtoken'
-import formidable from 'formidable'
+import formidable from 'formidable-serverless'
 
 export const config = {
   api: {
@@ -24,26 +24,37 @@ export default async function handler(req, res) {
     
     verify(token, JWT_SECRET)
     
-    const form = formidable({})
+    const form = new formidable.IncomingForm()
     
     form.parse(req, async (err, fields, files) => {
       if (err) {
+        console.error('Erro ao processar arquivo:', err)
         return res.status(500).json({ error: 'Erro ao processar arquivo' })
       }
       
-      const file = files.file?.[0]
+      // No formidable-serverless, a estrutura pode ser um pouco diferente
+      const file = files.file || files.file?.[0]
       
       if (!file) {
         return res.status(400).json({ error: 'Nenhum arquivo enviado' })
       }
       
-      const fileName = `${Date.now()}-${file.originalFilename}`
+      // Lê o arquivo como buffer
+      const fs = require('fs')
+      const fileBuffer = fs.readFileSync(file.filepath)
       
-      const { data, error } = await supabase.storage
+      const fileName = `${Date.now()}-${file.originalFilename || file.name}`
+      
+      const { data, error: uploadError } = await supabase.storage
         .from('escola-portal')
-        .upload(fileName, file)
+        .upload(fileName, fileBuffer, {
+          contentType: file.mimetype,
+          cacheControl: '3600',
+          upsert: false
+        })
       
-      if (error) {
+      if (uploadError) {
+        console.error('Erro ao fazer upload:', uploadError)
         return res.status(500).json({ error: 'Erro ao fazer upload' })
       }
       
@@ -57,6 +68,7 @@ export default async function handler(req, res) {
       })
     })
   } catch (error) {
+    console.error('Erro no upload:', error)
     return res.status(500).json({ error: 'Erro no upload' })
   }
 }
