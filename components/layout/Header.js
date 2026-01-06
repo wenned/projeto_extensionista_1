@@ -27,6 +27,28 @@ export default function Header() {
     router.push('/')
   }
 
+  // Função para rolar para seções na página inicial
+  const scrollToSection = (sectionId) => {
+    if (router.pathname !== '/') {
+      // Se não está na página inicial, vai para ela primeiro
+      router.push('/').then(() => {
+        // Espera a página carregar e depois rola
+        setTimeout(() => {
+          const element = document.getElementById(sectionId)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' })
+          }
+        }, 100)
+      })
+    } else {
+      // Já está na página inicial, apenas rola
+      const element = document.getElementById(sectionId)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,15 +67,24 @@ export default function Header() {
             <Link href="/" className={`font-medium ${router.pathname === '/' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
               Início
             </Link>
-            <Link href="/projetos" className={`font-medium ${router.pathname.startsWith('/projetos') ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
+            <button
+              onClick={() => scrollToSection('projetos')}
+              className={`font-medium ${router.pathname === '/' ? 'text-gray-700 hover:text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
+            >
               Projetos
-            </Link>
-            <Link href="/eventos" className={`font-medium ${router.pathname.startsWith('/eventos') ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
+            </button>
+            <button
+              onClick={() => scrollToSection('eventos')}
+              className={`font-medium ${router.pathname === '/' ? 'text-gray-700 hover:text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
+            >
               Eventos
-            </Link>
-            <Link href="/noticias" className={`font-medium ${router.pathname.startsWith('/noticias') ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
+            </button>
+            <button
+              onClick={() => scrollToSection('noticias')}
+              className={`font-medium ${router.pathname === '/' ? 'text-gray-700 hover:text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
+            >
               Notícias
-            </Link>
+            </button>
             {user?.role === 'ADMIN' && (
               <Link href="/admin" className="font-medium text-red-600 hover:text-red-700">
                 Admin
@@ -61,7 +92,6 @@ export default function Header() {
             )}
           </nav>
 
-          {/* User Actions - VERSÃO SIMPLIFICADA */}
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-4">
@@ -129,35 +159,72 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-4">
-              <Link href="/" className={`font-medium ${router.pathname === '/' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
+              <Link 
+                href="/" 
+                className={`font-medium ${router.pathname === '/' ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Início
               </Link>
-              <Link href="/projetos" className={`font-medium ${router.pathname.startsWith('/projetos') ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
+              <button
+                onClick={() => {
+                  scrollToSection('projetos')
+                  setIsMenuOpen(false)
+                }}
+                className="text-left font-medium text-gray-700 hover:text-blue-600"
+              >
                 Projetos
-              </Link>
-              <Link href="/eventos" className={`font-medium ${router.pathname.startsWith('/eventos') ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
+              </button>
+              <button
+                onClick={() => {
+                  scrollToSection('eventos')
+                  setIsMenuOpen(false)
+                }}
+                className="text-left font-medium text-gray-700 hover:text-blue-600"
+              >
                 Eventos
-              </Link>
-              <Link href="/noticias" className={`font-medium ${router.pathname.startsWith('/noticias') ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}>
+              </button>
+              <button
+                onClick={() => {
+                  scrollToSection('noticias')
+                  setIsMenuOpen(false)
+                }}
+                className="text-left font-medium text-gray-700 hover:text-blue-600"
+              >
                 Notícias
-              </Link>
+              </button>
               
               {user ? (
                 <>
                   <div className="pt-2 border-t">
-                    <Link href="/perfil" className="font-medium text-gray-700 hover:text-blue-600 block py-2">
+                    <Link 
+                      href="/perfil" 
+                      className="font-medium text-gray-700 hover:text-blue-600 block py-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
                       Meu Perfil
                     </Link>
-                    <Link href="/meus-projetos" className="font-medium text-gray-700 hover:text-blue-600 block py-2">
+                    <Link 
+                      href="/meus-projetos" 
+                      className="font-medium text-gray-700 hover:text-blue-600 block py-2"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
                       Meus Projetos
                     </Link>
                     {user.role === 'ADMIN' && (
-                      <Link href="/admin" className="font-medium text-red-600 hover:text-red-700 block py-2">
+                      <Link 
+                        href="/admin" 
+                        className="font-medium text-red-600 hover:text-red-700 block py-2"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
                         Painel Admin
                       </Link>
                     )}
                     <button
-                      onClick={handleLogout}
+                      onClick={() => {
+                        handleLogout()
+                        setIsMenuOpen(false)
+                      }}
                       className="text-left font-medium text-red-600 hover:text-red-700 block py-2 w-full"
                     >
                       Sair
@@ -165,7 +232,11 @@ export default function Header() {
                   </div>
                 </>
               ) : (
-                <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg text-center">
+                <Link 
+                  href="/register" 
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg text-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
                   Cadastrar
                 </Link>
               )}
